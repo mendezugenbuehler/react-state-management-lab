@@ -1,3 +1,5 @@
+import React, { useState } from 'react';
+
 const App = () => {
   const [team, setTeam] = useState([]);
   const [money, setMoney] = useState(100);
@@ -84,9 +86,45 @@ const App = () => {
     },
   ]);
 
-  return (
-    <h1>Hello world!</h1>
-  );
-}
+  const addTeam = (fighter) => {
+    if (money >= fighter.price) {
+      setTeam([...team, fighter]);
+      setMoney(money - fighter.price);
+    } else {
+      alert('You dont have enough money to add this fighter!');
+    }
+  };
 
-export default App
+  return (
+    <div>
+      <h1>Zombie Apocalypse Team</h1>
+      <p>Money: ${money}</p>
+
+      <h2>Available Fighters</h2>
+      <ul>
+        {zombieFighters.map((fighter) => (
+          <li key={fighter.id} style={{ marginBottom: '20px' }}>
+            <img src={fighter.img} alt={fighter.name} width="50" />
+            <h3>{fighter.name}</h3>
+            <p>Price: ${fighter.price}</p>
+            <p>Strength: {fighter.strength}</p>
+            <p>Agility: {fighter.agility}</p>
+            <button onClick={() => addToTeam(fighter)}>Add to Your Team</button>
+          </li>
+        ))}
+      </ul>
+
+      <h2>Your Zombie Apocalypse Team</h2>
+      <ul>
+        {team.map((fighter) => (
+          <li key={fighter.id}>
+            <h3>{fighter.name}</h3>
+            <img src={fighter.img} alt={fighter.name} width="50" />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default App;
