@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import './App.css';
 
 const App = () => {
   const [team, setTeam] = useState([]);
   const [money, setMoney] = useState(100);
-  const [zombieFighters] = useState([
+  const [zombieFighters, setZombieFighters] = useState([
     {
       id: 1,
       name: 'Survivor',
@@ -86,43 +87,65 @@ const App = () => {
     },
   ]);
 
-  const addTeam = (fighter) => {
+  const handleAddFighter = (fighter) => {
     if (money >= fighter.price) {
       setTeam([...team, fighter]);
+      setZombieFighters(zombieFighters.filter((item) => item.id !== fighter.id));
       setMoney(money - fighter.price);
     } else {
-      alert('You dont have enough money to add this fighter!');
+      console.log('You dont have enough money!');
     }
   };
 
+  const handleRemoveFighter = (fighter) => {
+    setTeam(team.filter((item) => item.id !== fighter.id));
+    setZombieFighters([...zombieFighters, fighter]);
+    setMoney(money + fighter.price);
+  };
+
+  const totalStrength = team.reduce((total, member) => total + member.strength, 0);
+  const totalAgility = team.reduce((total, member) => total + member.agility, 0);
+
   return (
     <div>
-      <h1>Zombie Apocalypse Team</h1>
-      <p>Money: ${money}</p>
+      <h1>Zombie Apocalypse Survival Team</h1>
+      <p className="money-display">Money: ${money}</p>
 
-      <h2>Available Fighters</h2>
-      <ul>
+      <h2>Available Zombie Fighters</h2>
+      <ul className="fighter-list">
         {zombieFighters.map((fighter) => (
-          <li key={fighter.id} style={{ marginBottom: '20px' }}>
-            <img src={fighter.img} alt={fighter.name} width="50" />
+          <li key={fighter.id} className="fighter-card">
+            <img src={fighter.img} alt={fighter.name} width="100" />
             <h3>{fighter.name}</h3>
             <p>Price: ${fighter.price}</p>
             <p>Strength: {fighter.strength}</p>
             <p>Agility: {fighter.agility}</p>
-            <button onClick={() => addToTeam(fighter)}>Add to Your Team</button>
+            <button onClick={() => handleAddFighter(fighter)}>Add to Zombie Team</button>
           </li>
         ))}
       </ul>
 
-      <h2>Your Zombie Apocalypse Team</h2>
-      <ul>
-        {team.map((fighter) => (
-          <li key={fighter.id}>
-            <h3>{fighter.name}</h3>
-            <img src={fighter.img} alt={fighter.name} width="50" />
-          </li>
-        ))}
-      </ul>
+      <h2>Your Zombie Survival Team</h2>
+      {team.length === 0 ? (
+        <p className="centered-message">Pick your team!</p>
+      ) : (
+        <div>
+          <ul className="fighter-list">
+            {team.map((fighter) => (
+              <li key={fighter.id} className="fighter-card">
+                <img src={fighter.img} alt={fighter.name} width="100" />
+                <h3>{fighter.name}</h3>
+                <p>Price: ${fighter.price}</p>
+                <p>Strength: {fighter.strength}</p>
+                <p>Agility: {fighter.agility}</p>
+                <button onClick={() => handleRemoveFighter(fighter)}>Remove from Your Team</button>
+              </li>
+            ))}
+          </ul>
+          <h3>Total Strength: {totalStrength}</h3>
+          <h3>Total Agility: {totalAgility}</h3>
+        </div>
+      )}
     </div>
   );
 };
